@@ -1,0 +1,166 @@
+openapi: 3.0.0
+info:
+  title: Client API
+  version: 1.0.0
+  description: API for managing bank clients
+servers:
+  - url: http://localhost:8080
+    description: Client Service
+paths:
+  /clients:
+    get:
+      summary: Get all clients
+      operationId: getAllClients
+      responses:
+        '200':
+          description: List of clients retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+    post:
+      summary: Create a new client
+      operationId: createClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Bad request
+
+  /clients/{clientId}:
+    get:
+      summary: Get client by ID
+      operationId: getClientById
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Client details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '404':
+          description: Client not found
+    put:
+      summary: Update client by ID
+      operationId: updateClientById
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '200':
+          description: Client updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Client not found
+    delete:
+      summary: Delete client by ID
+      operationId: deleteClientById
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Client deleted successfully
+        '404':
+          description: Client not found
+components:
+  schemas:
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        typeclient:
+          $ref: '#/components/schemas/TypeClient'
+        typedocument:
+          $ref: '#/components/schemas/TypeDocument'
+      required:
+        - name
+        - type
+        - dni
+    SuccessResponse:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: Indicates if the operation was successful or not.
+        status:
+          type: number
+          description: HTTP status from the response.
+        message:
+          type: string
+          description: A brief message describing the result.
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when the response was generated.
+        data:
+          type: object
+          description: The actual data payload of the response.
+    TypeClient:
+      properties:
+        idTypeClient:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+    TypeDocument:
+      properties:
+        idTypeDocument:
+          type: string
+        type:
+          type: string
+        typedoc:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when the response was generated.
+        errors:
+          type: array
+          items:
+            type: string
+          description: An array of error objects if the operation encountered errors.
